@@ -2,9 +2,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Created by casciarobotics on 10/6/16.
@@ -19,11 +18,15 @@ public class HopperAPI {
     private final float OPEN = 1;
     private final float CLOSED = 0;
 
+    public HopperAPI (HardwareMap hardwareMap){
+        init(hardwareMap);
+    }
+
     public void init (HardwareMap hw){
         HardwareMap map = hw;
 
         mainMotor = hw.dcMotor.get("hopperMain");
-        supportMotor = hw.dcMotor.get("hopperMain");
+        supportMotor = hw.dcMotor.get("hopperSupport");
 
         mainMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         supportMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -52,6 +55,16 @@ public class HopperAPI {
     public void stop() {
         mainMotor.setPower(0.0f);
         supportMotor.setPower(0.0f);
+    }
+
+    public void toggleOn(float percentage) {
+        if(mainMotor.getPower() != 0) {
+            mainMotor.setPower(0);
+            supportMotor.setPower(0);
+        } else {
+            mainMotor.setPower(percentage);
+            supportMotor.setPower(percentage);
+        }
     }
 
 }
