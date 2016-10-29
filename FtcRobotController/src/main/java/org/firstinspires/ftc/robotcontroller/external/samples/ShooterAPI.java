@@ -13,8 +13,8 @@ public class ShooterAPI {
 
     HardwareMap hwMap = null;
     //tell what other opmodes will call it
-    public ShooterAPI (){
-
+    public ShooterAPI (HardwareMap hardwareMap){
+        init(hardwareMap);
     }
 
     public void init(HardwareMap tempHwMap){
@@ -26,25 +26,20 @@ public class ShooterAPI {
 
         leftShooter.setPower(0);
         rightShooter.setPower(0);
-
     }
 
-public void runShooter(float percentage){
-    rightShooter.setPower(percentage);
-    leftShooter.setPower(percentage);
+    public void runShooter(float percentage){
+        rightShooter.setPower(percentage);
+        leftShooter.setPower(percentage);
+    }
 
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
+    public void toggleOn(float percentage) {
+        if(rightShooter.getPower() > 0 || leftShooter.getPower() > 0) {
+            rightShooter.setPower(0);
+            leftShooter.setPower(0);
+        } else {
+            rightShooter.setPower(percentage);
+            leftShooter.setPower(percentage);
+        }
+    }
 }
