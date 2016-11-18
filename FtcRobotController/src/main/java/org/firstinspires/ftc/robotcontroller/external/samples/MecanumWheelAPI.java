@@ -13,8 +13,10 @@ public class MecanumWheelAPI {
     public int reverse = 1;
 
     //define Motors
-    public DcMotor leftMotor;
-    public DcMotor rightMotor;
+    public DcMotor leftFrontMotor;
+    public DcMotor leftRearMotor;
+    public DcMotor rightFrontMotor;
+    public DcMotor rightRearMotor;
 
     HardwareMap hwMap = null;
 
@@ -27,61 +29,83 @@ public class MecanumWheelAPI {
     public void init (HardwareMap tempHwMap){
         hwMap = tempHwMap;
 
-        leftMotor = hwMap.dcMotor.get("leftMotor");
-        rightMotor = hwMap.dcMotor.get("rightMotor");
-        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontMotor = hwMap.dcMotor.get("leftFrontMotor");
+        leftRearMotor = hwMap.dcMotor.get("leftRearMotor");
+        rightFrontMotor = hwMap.dcMotor.get("rightFrontMotor");
+        rightRearMotor = hwMap.dcMotor.get("rightRearMotor");
+        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         drive(0f, 0f);
     }
 
     //used to drive takes two joystick values to control each side independently
     public void drive(float leftPercentage,float rightPercentage){
-        leftMotor.setPower(leftPercentage);
-        rightMotor.setPower(rightPercentage);
+        leftFrontMotor.setPower(leftPercentage);
+        leftRearMotor.setPower(leftPercentage);
+        rightFrontMotor.setPower(leftPercentage);
+        rightRearMotor.setPower(leftPercentage);
     }
 
     //used to move horizontally to the left
     public void strafeLeft(float percentage){
-        leftMotor.setPower(percentage);
-        rightMotor.setPower(-percentage);
+        leftFrontMotor.setPower(percentage);
+        leftRearMotor.setPower(-percentage);
+        rightFrontMotor.setPower(-percentage);
+        rightRearMotor.setPower(percentage);
     }
 
     //used to move horizontally to the right
     public void strafeRight(float percentage){
-        leftMotor.setPower(-percentage);
-        rightMotor.setPower(percentage);
+        strafeLeft(-percentage);
     }
 
     //used to move diagonally to the left
     public void leftDiagonal(float percentage){
-        percentage = percentage * reverse;
-        rightMotor.setPower(percentage);
+        leftFrontMotor.setPower(0);
+        leftRearMotor.setPower(percentage);
+        rightFrontMotor.setPower(0);
+        rightRearMotor.setPower(percentage);
     }
 
-    public void autonomousStrafeLeft(float percentage){
-        percentage = percentage * reverse;
-        leftMotor.setPower(percentage);
-        rightMotor.setPower(-percentage);
+    public void autonomousTurnLeft(float percentage){
+        leftFrontMotor.setPower(percentage);
+        leftRearMotor.setPower(percentage);
+        rightFrontMotor.setPower(-percentage);
+        rightRearMotor.setPower(-percentage);
     }
 
-    public void autonomousStrafeRight(float percentage) {
-        percentage = percentage * reverse;
-        leftMotor.setPower(-percentage);
-        rightMotor.setPower(percentage);
+    public void autonomousTurnRight(float percentage) {
+        autonomousTurnLeft(-percentage);
+    }
+
+    public void turnLeft(float percentage){
+        autonomousTurnLeft(percentage);
+    }
+
+    public void turnRight(float percentage) {
+        autonomousTurnRight(percentage);
     }
 
     //used to move diagonally to the right
     public void rightDiagonal(float percentage){
-        percentage = percentage * reverse;
-        leftMotor.setPower(percentage);
+        leftFrontMotor.setPower(percentage);
+        leftRearMotor.setPower(0);
+        rightFrontMotor.setPower(percentage);
+        rightRearMotor.setPower(0);
     }
 
     public void setLeftMotor(float power) {
-        leftMotor.setPower(power);
+
     }
 
     public void setRightMotor(float power) {
-        rightMotor.setPower(power);
+
+
     }
 
+    public void setReverse(boolean red) {
+        if(red) reverse = 1;
+        else reverse = -1;
+    }
 }

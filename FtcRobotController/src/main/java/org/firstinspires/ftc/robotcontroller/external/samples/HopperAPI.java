@@ -11,60 +11,64 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class HopperAPI {
     //The central motor for turning the hopper and the servo for closing it. There also is a backup motor that runs at the same time.
     DcMotor mainMotor;
-    DcMotor supportMotor;
-    Servo door;
+//    Servo door;
 
     //opening and closing the doors; change these to change all references
     private final float OPEN = 1;
     private final float CLOSED = 0;
 
+    private boolean on = false;
+    private float percentage = 0.0f;
+
     public HopperAPI (HardwareMap hardwareMap){
         init(hardwareMap);
+        on = false;
     }
 
     public void init (HardwareMap hw){
         HardwareMap map = hw;
 
         mainMotor = hw.dcMotor.get("hopperMain");
-        supportMotor = hw.dcMotor.get("hopperSupport");
 
         mainMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        supportMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        door = hw.servo.get("hopperDoor");
+//        door = hw.servo.get("hopperDoor");
     }
 
-    public void openDoor() {
-        door.setPosition(OPEN);
-    }
+//    public void openDoor() {
+//        door.setPosition(OPEN);
+//    }
 
-    public void closeDoor() {
-        door.setPosition(CLOSED);
-    }
+//    public void closeDoor() {
+//        door.setPosition(CLOSED);
+//    }
 
     public void beginLifting() {
-        mainMotor.setPower(0.75f);
-        supportMotor.setPower(0.75f);
+        mainMotor.setPower(-percentage);
     }
 
     public void beginLowering() {
-        mainMotor.setPower(-0.75f);
-        supportMotor.setPower(-0.75f);
+        mainMotor.setPower(percentage);
     }
 
     public void stop() {
         mainMotor.setPower(0.0f);
-        supportMotor.setPower(0.0f);
     }
 
     public void toggleOn(float percentage) {
-        if(mainMotor.getPower() != 0) {
+        this.percentage = Math.abs(percentage);
+
+        if(on) {
             mainMotor.setPower(0);
-            supportMotor.setPower(0);
+            on = false;
         } else {
+            on = true;
             mainMotor.setPower(percentage);
-            supportMotor.setPower(percentage);
         }
+    }
+
+    public boolean getOn() {
+        return on;
     }
 
 }

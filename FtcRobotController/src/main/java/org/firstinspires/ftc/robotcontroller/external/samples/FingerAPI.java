@@ -47,6 +47,11 @@ public class FingerAPI {
             fingerLeft.setPosition(leftFingerTarget);
         }
     }
+    public float getLeftFingerTarget() {
+        return leftFingerTarget;
+    }
 
-
+    public float getRightFingerTarget() {
+        return rightFingerTarget;
+    }
 }

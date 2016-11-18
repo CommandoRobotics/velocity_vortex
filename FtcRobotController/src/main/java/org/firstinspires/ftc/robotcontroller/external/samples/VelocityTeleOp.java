@@ -7,35 +7,41 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  */
 public class VelocityTeleOp extends OpMode {
 
-    MecanumWheelAPI driveTrain;
+    WheelAPI driveTrain;
     HopperAPI hopper;
     CollecterAPI collector;
-    ShooterAPI shooter;
-    FingerAPI fingers;
+//    ShooterAPI shooter;
+ //   FingerAPI fingers;
+
+    boolean xPressed;
+    boolean bPressed;
 
     public void init() {
-        driveTrain = new MecanumWheelAPI(hardwareMap);
+        driveTrain = new WheelAPI(hardwareMap);
         hopper = new HopperAPI(hardwareMap);
         collector = new CollecterAPI(hardwareMap);
-        shooter = new ShooterAPI(hardwareMap);
-        fingers = new FingerAPI(hardwareMap);
+//        shooter = new ShooterAPI(hardwareMap);
+      //  fingers = new FingerAPI(hardwareMap);
 
         collector.toggleOn(0.8f);
+        collector.collect();
         hopper.toggleOn(0.8f);
+
+        xPressed = false;
+        bPressed = false;
     }
 
     public void loop() {
         moveRobot();
         collect();
         moveBalls();
-        shoot();
-        thrustFingers();
+//        shoot();
+//        thrustFingers();
     }
 
     private void moveRobot() {
-        //for those who want to control with the joysticks
         telemetry.addData("LeftX: ", gamepad1.left_stick_x);
-        telemetry.addData("LeftY: ", gamepad1.left_stick_y);
+    telemetry.addData("LeftYAX: ", gamepad1.left_stick_y);
         telemetry.addData("RightX: ", gamepad1.right_stick_x);
         telemetry.addData("RightY: ", gamepad1.right_stick_y);
 
@@ -48,26 +54,51 @@ public class VelocityTeleOp extends OpMode {
     }
 
     private void collect() {
-        if(gamepad2.x) collector.toggleOn(0.8f);
+        //bumpers for collector
+//        if(gamepad1.left_bumper) {
+//            if(!collector.getOn()) collector.toggleOn(0.80f);
+//            collector.collect();
+//        } else if(gamepad1.right_bumper) {
+//            if (!collector.getOn()) collector.toggleOn(0.80f);
+//            collector.expel();
+//        } else
+        if(gamepad1.b && !bPressed) {
+            collector.toggleOn(0.8f);
+            bPressed = true;
+        } else if(!gamepad1.b) {
+            bPressed = false;
+        }
     }
 
     private void moveBalls() {
-        if(gamepad2.y) hopper.beginLifting();
-        else if(gamepad2.a) hopper.beginLowering();
-        else if(gamepad2.x) hopper.toggleOn(0.8f);
+        if(gamepad1.left_trigger > 0.1) {
+            if(!hopper.getOn()) hopper.toggleOn(0.80f);
+            hopper.beginLifting();
+            collector.collect();
+        } else if(gamepad1.right_trigger > 0.1) {
+            if (!hopper.getOn()) hopper.toggleOn(0.8f);
+            hopper.beginLowering();
+            collector.expel();
+        } else if(gamepad1.x && !xPressed) {
+            hopper.toggleOn(0.8f);
+            xPressed = true;
+        } else if(!gamepad1.x) {
+            xPressed = false;
+        }
     }
 
     private void shoot() {
-        if(gamepad2.b) shooter.toggleOn(0.8f);
+//        if(gamepad1.y) shooter.toggleOn(0.8f);
     }
 
-    private void thrustFingers() {
-        if(gamepad2.left_bumper || gamepad2.left_trigger > 0.5) {
-            fingers.setLeftFingerTarget(0.8f);
-        } else if(gamepad2.right_bumper || gamepad2.right_trigger > 0.5) {
-            fingers.setRightFingerTarget(0.8f);
+   /* private void thrustFingers() {
+        //TODO: Set this to the d-pad for gamepad1
+        if(gamepad2.left_bumper) {
+            fingers.setLeftFingerTarget(fingers.getLeftFingerTarget() - 0.1f);
+        } else if(gamepad2.right_bumper) {
+            fingers.setRightFingerTarget(fingers.getRightFingerTarget() - 0.1f);
         }
 
         fingers.updateFingers();
-    }
+    }*/
 }

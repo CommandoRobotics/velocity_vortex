@@ -13,8 +13,12 @@ public class CollecterAPI {
     HardwareMap hwMap = null;
     //tell what other opmodes will call it
 
+    private boolean on = false;
+    private float percentage = 0.0f;
+
     public CollecterAPI (HardwareMap hardwareMap){
         init(hardwareMap);
+        on = false;
     }
 
 //tell what to do at init and find motors
@@ -22,27 +26,39 @@ public class CollecterAPI {
         hwMap = tempHwMap;
         rightCollector = hwMap.dcMotor.get("rightCollector");
         leftCollector = hwMap.dcMotor.get("leftCollector");
-       rightCollector.setDirection(DcMotor.Direction.FORWARD);
-       leftCollector.setDirection(DcMotor.Direction.REVERSE);
+       leftCollector.setDirection(DcMotor.Direction.FORWARD);
+       rightCollector.setDirection(DcMotor.Direction.REVERSE);
 
         rightCollector.setPower(0);
         leftCollector.setPower(0);
 
     }
 //tell what to use in other classes to use the collector
-    public void runCollecter(float percentage){
+    public void collect() {
+        rightCollector.setPower(-percentage);
+        leftCollector.setPower(-percentage);
+    }
+
+    public void expel() {
         rightCollector.setPower(percentage);
         leftCollector.setPower(percentage);
     }
 
     public void toggleOn(float percentage) {
-        if(rightCollector.getPower() > 0 || leftCollector.getPower() > 0) {
+        this.percentage = Math.abs(percentage);
+        if(on) {
+            on = false;
             rightCollector.setPower(0);
             leftCollector.setPower(0);
         } else {
+            on = true;
             rightCollector.setPower(percentage);
             leftCollector.setPower(percentage);
         }
+    }
+
+    public boolean getOn() {
+        return on;
     }
 }
 
